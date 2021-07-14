@@ -3,9 +3,9 @@
     "title": "Generic schema for the data passed to a grading cloud function.",
     "type": "object",
     "properties": {
-        "type": {
+        "command": {
             "type": "string",
-            "enum": ["health", "grade"]
+            "enum": ["healthcheck", "grade"]
         }
     },
     "additionalProperties": false

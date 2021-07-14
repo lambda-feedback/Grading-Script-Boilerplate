@@ -7,10 +7,11 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip3 install -r requirements.txt
 
-COPY schema.json /tmp
+COPY schema.json ./
 
-# Copy the script
-COPY grade.py .
+# Copy the scripts
+COPY *.py ./
+COPY tests/* /tests/
 
 # Run the handler function
-CMD ["app/grade.handler"]
+CMD ["app/handler.handler"]
