@@ -10,15 +10,14 @@ from ..tests import HealthcheckRunner, TestGradingFunction
 """
 
 def healthcheck():
+    load_test_case = unittest.TestLoader().loadTestsFromTestCase
+    grading_function_tests = load_test_case(TestGradingFunction)
+
     no_stream = open(os.devnull, 'w')
     sys.stderr = no_stream
 
-    loader = unittest.TestLoader()
-    suite = unittest.TestSuite()
-
-    suite.addTest(loader.loadTestsFromTestCase(TestGradingFunction))
-    runner = HealthcheckRunner(verbosity=0)
-    result = runner.run(suite)
+    test_runner = HealthcheckRunner(verbosity=0)
+    result = test_runner.run(grading_function_tests)
 
     sys.stderr = sys.__stderr__
     no_stream.close()

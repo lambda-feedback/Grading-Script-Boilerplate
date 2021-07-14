@@ -1,14 +1,14 @@
 import unittest, json
 
 from pprint import pprint
-from grade import handler
+from app import handler
 
 class TestHandlerFunction(unittest.TestCase):
-    def __init__(self, methodName: str) -> None:
+    def __init__(self, methodName: str):
         super().__init__(methodName=methodName)
         self._response = {}
 
-    def tearDown(self) -> None:
+    def tearDown(self):
         pprint(self._response)
 
         return super().tearDown()
