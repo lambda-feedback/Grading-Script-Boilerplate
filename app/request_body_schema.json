@@ -1,0 +1,12 @@
+{
+    "$schema": "http://json-schema.org/draft/2019-09/schema#",
+    "title": "Generic schema for the data passed to a grading cloud function.",
+    "type": "object",
+    "properties": {
+        "command": {
+            "type": "string",
+            "enum": ["healthcheck", "grade"]
+        }
+    },
+    "additionalProperties": false
+}
