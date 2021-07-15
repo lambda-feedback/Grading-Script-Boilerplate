@@ -1,7 +1,7 @@
 import unittest, json
 
 from pprint import pprint
-from grade import handler
+from app import handler
 
 class TestHandlerFunction(unittest.TestCase):
     def __init__(self, methodName: str) -> None:
@@ -12,7 +12,6 @@ class TestHandlerFunction(unittest.TestCase):
         pprint(self._response)
 
         return super().tearDown()
-
 
     def test_handle_bodyless_event(self):
         event = {

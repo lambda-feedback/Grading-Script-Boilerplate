@@ -7,11 +7,11 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip3 install -r requirements.txt
 
-COPY schema.json ./
+COPY request_body_schema.json .
 
 # Copy the scripts
-COPY *.py ./
-COPY tests/* /tests/
+COPY __init__.py app.py algorithm.py validate.py ./app/
+COPY tests/* ./app/tests/
 
 # Run the handler function
-CMD ["app/handler.handler"]
+CMD ["/app/app.handler"]
