@@ -2,10 +2,10 @@ import json
 
 from jsonschema import Draft7Validator as Validator
 
-schema_path_local = '/Users/louismanestar/OneDrive - Imperial College London/Jobs/StudentShapers 2021/software-for-maths-learning/grading-script-boilerplate/grade/request_body_schema.json'
+schema_path_local = '/Users/louismanestar/OneDrive - Imperial College London/Jobs/StudentShapers 2021/software-for-maths-learning/grading-script-boilerplate/app/request_body_schema.json'
 schema_path_aws = '/app/request_body_schema.json'
 
-with open(schema_path_aws, 'r') as s:
+with open(schema_path_local, 'r') as s:
     request_body_schema = json.load(s)
     request_body_validator = Validator(request_body_schema)
 

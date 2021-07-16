@@ -14,11 +14,9 @@ def healthcheck():
     sys.stderr = no_stream
 
     loader = unittest.TestLoader()
-    suite = unittest.TestSuite()
-
-    suite.addTest(loader.loadTestsFromTestCase(TestGradingFunction))
     runner = HealthcheckRunner(verbosity=0)
-    result = runner.run(suite)
+    
+    result = runner.run(loader.loadTestsFromTestCase(TestGradingFunction))
 
     sys.stderr = sys.__stderr__
     no_stream.close()
@@ -36,7 +34,7 @@ def load_body(body_text):
         body = json.loads(body_text)
     except json.JSONDecodeError as e:
         response = {
-            "message": "Request body is not valid JSON",
+            "message": "Request body is not valid JSON.",
             "error": {
                 "message": e.msg,
                 "position": e.pos
@@ -44,7 +42,7 @@ def load_body(body_text):
         }
     except TypeError as e:
         response = {
-            "message": "Request body is not decoded JSON",
+            "message": "Request body is not decoded JSON.",
         }
     
     return (body, response)

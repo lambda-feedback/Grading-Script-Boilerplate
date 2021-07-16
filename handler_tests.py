@@ -29,7 +29,7 @@ class TestHandlerFunction(unittest.TestCase):
         }
 
         self._response = handler(event)
-        self.assertEqual(self._response.get("message"), "Request body threw an error attempting to parse the request body.")
+        self.assertEqual(self._response.get("message"), "Request body is not valid JSON.")
 
     def test_healthcheck(self):
         body = {"command": "healthcheck"}
