@@ -2,10 +2,10 @@ import json, unittest, sys, os
 
 from typing import Tuple
 
-from .algorithm import grading_function
 from .validate import validate_request
 
-from .tests import HealthcheckRunner, TestGradingFunction
+from ..algorithm import grading_function
+from ..tests import HealthcheckRunner, TestGradingFunction
 
 """
     Healthcheck Methods
@@ -129,9 +129,12 @@ def handler(event, context={}):
     if validation_error:
         return validation_error
     
+    result = grading_function(body) \
+        if body["command"] == "grade" \
+        else healthcheck()
+
     return {
         "command": body["command"],
-        "result": grading_function(body) if body["command"] == "grade" \
-            else healthcheck(),
+        "result": result,
         "event": event
     }

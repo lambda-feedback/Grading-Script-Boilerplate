@@ -1,13 +1,27 @@
 import unittest
 
 from ..algorithm import grading_function
-from ..validate import validate_request
-
-"""
-    TestCase Class used to create unittests for the grading function.
-"""
+from ..tools.validate import validate_request
 
 class TestGradingFunction(unittest.TestCase):
+    """
+        TestCase Class used to test the algorithm and the schema.
+        ---
+        Tests are used here to check that the algorithm written 
+        is working as it should. 
+        
+        It's best practise to write these tests first to get a 
+        kind of 'specification' for how your algorithm should 
+        work, and you should run these tests before committing 
+        your code to AWS.
+
+        Read the docs on how to use unittest here:
+        https://docs.python.org/3/library/unittest.html
+
+        Use validate_request() and grading_function() to check
+        both your schema and your algorithm work as they should.
+    """
+
     def test_invalid_grading_data(self):
         body = {"hello": "world"}
 

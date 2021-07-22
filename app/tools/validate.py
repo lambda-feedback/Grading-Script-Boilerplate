@@ -1,17 +1,20 @@
-import json
+import json, os
 
 from typing import Union
 from jsonschema import Draft7Validator as Validator
 
-schema_path_local = '/Users/louismanestar/OneDrive - Imperial College London/Jobs/StudentShapers 2021/software-for-maths-learning/grading-script-boilerplate/grade/request_body_schema.json'
+schema_path_local = '/Users/louismanestar/OneDrive - Imperial College London/Jobs/StudentShapers 2021/software-for-maths-learning/grading-script-boilerplate/concept_v2/app/request_body_schema.json'
 schema_path_aws = '/app/request_body_schema.json'
 
+path = os.path.abspath(os.path.dirname(__file__))
+schema_path = os.path.join(path, "..", "request_body_schema.json")
+
 # Load the request body schema and validator
-with open(schema_path_aws, 'r') as s:
+with open(schema_path, 'r') as s:
     request_body_schema = json.load(s)
     request_body_validator = Validator(request_body_schema)
 
-def validate_request(body: dict) -> Union(list, None):
+def validate_request(body: dict) -> Union[dict, None]:
     """
     Function to return any errors in the request body based on its schema.
     ---
