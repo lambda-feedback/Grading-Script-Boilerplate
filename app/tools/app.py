@@ -2,10 +2,10 @@ import json, unittest, sys, os
 
 from typing import Tuple
 
-from .validate import validate_request
-
 from ..algorithm import grading_function
-from ..tests import HealthcheckRunner, TestGradingFunction
+from ..tests import *
+
+from .validate import validate_request
 
 """
     Healthcheck Methods
@@ -26,10 +26,13 @@ def healthcheck() -> dict:
 
     # Create a test loader and test runner instance
     loader = unittest.TestLoader()
+    suite = unittest.TestSuite()
+
+    suite.addTest(loader.loadTestsFromTestCase(TestSchemaValidation))
+    suite.addTest(loader.loadTestsFromTestCase(TestGradingFunction))
+
     runner = HealthcheckRunner(verbosity=0)
 
-    # Load and run the tests
-    suite = loader.loadTestsFromTestCase(TestGradingFunction)
     result = runner.run(suite)
 
     # Reset stderr and close the null stream

@@ -11,12 +11,15 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - name: Test handler function
+    - name: Test schema
       run: |
-        python -m unittest app.tests.handler
-    - name: Test schema and algorithm
+        python -m unittest app.tests.validation
+    - name: Test algorithm
       run: |
         python -m unittest app.tests.grading
+    - name: Test handler function
+      run: |
+        python -m unittest app.tests.handling
           
   deploy:
     name: Deploy

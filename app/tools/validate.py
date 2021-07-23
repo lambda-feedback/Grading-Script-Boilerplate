@@ -1,10 +1,8 @@
 import json, os
 
 from typing import Union
-from jsonschema import Draft7Validator as Validator
 
-schema_path_local = '/Users/louismanestar/OneDrive - Imperial College London/Jobs/StudentShapers 2021/software-for-maths-learning/grading-script-boilerplate/concept_v2/app/request_body_schema.json'
-schema_path_aws = '/app/request_body_schema.json'
+from jsonschema import Draft7Validator as Validator
 
 path = os.path.abspath(os.path.dirname(__file__))
 schema_path = os.path.join(path, "..", "request_body_schema.json")

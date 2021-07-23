@@ -1,11 +1,10 @@
 import unittest
 
 from ..algorithm import grading_function
-from ..tools.validate import validate_request
 
 class TestGradingFunction(unittest.TestCase):
     """
-        TestCase Class used to test the algorithm and the schema.
+        TestCase Class used to test the algorithm.
         ---
         Tests are used here to check that the algorithm written 
         is working as it should. 
@@ -18,25 +17,14 @@ class TestGradingFunction(unittest.TestCase):
         Read the docs on how to use unittest here:
         https://docs.python.org/3/library/unittest.html
 
-        Use validate_request() and grading_function() to check
-        both your schema and your algorithm work as they should.
+        Use grading_function() to check your algorithm works 
+        as it should.
     """
-
-    def test_invalid_grading_data(self):
-        body = {"hello": "world"}
-
-        validation_error = validate_request(body)
-
-        self.assertNotEqual(validation_error, None)
-        self.assertEqual(validation_error.get("message"), "Schema threw an error when validating the request body.")
-
-    def test_valid_grading_data(self):
+    def test_returns_is_correct_true(self):
         body = {"command": "grade"}
 
-        validation_error = validate_request(body)
         response = grading_function(body)
 
-        self.assertEqual(validation_error, None)
         self.assertEqual(response.get("is_correct"), True)
 
 if __name__ == "__main__":
