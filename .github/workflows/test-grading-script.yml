@@ -4,8 +4,11 @@
 name: Test Grading Scripts before deployment
 
 on:
+  push:
+    branches: [ master ]
   pull_request:
     branches: [ master ]
+  workflow_dispatch:
 
 jobs:
   build:
@@ -14,7 +17,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [3.8]
+        python-version: [ 3.8 ]
 
     steps:
     - uses: actions/checkout@v2
