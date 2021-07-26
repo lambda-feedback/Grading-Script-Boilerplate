@@ -14,7 +14,7 @@ COPY request_body_schema.json ./app/
 
 # Copy the main grading and testing script
 COPY algorithm.py ./app/
-COPY tests/grading.py ./app/tests/
+COPY tests/grading.py tests/validation.py ./app/tests/
 
 # Set permissions so files and directories can be accessed on AWS
 RUN chmod 644 $(find . -type f)

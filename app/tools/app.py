@@ -26,11 +26,11 @@ def healthcheck() -> dict:
 
     # Create a test loader and test runner instance
     loader = unittest.TestLoader()
-    suite = unittest.TestSuite()
 
-    suite.addTest(loader.loadTestsFromTestCase(TestSchemaValidation))
-    suite.addTest(loader.loadTestsFromTestCase(TestGradingFunction))
+    schema_tests = loader.loadTestsFromTestCase(TestSchemaValidation)
+    grading_tests = loader.loadTestsFromTestCase(TestGradingFunction)
 
+    suite = unittest.TestSuite([schema_tests, grading_tests])
     runner = HealthcheckRunner(verbosity=0)
 
     result = runner.run(suite)
