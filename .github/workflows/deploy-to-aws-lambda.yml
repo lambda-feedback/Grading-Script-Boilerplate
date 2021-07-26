@@ -2,6 +2,7 @@ on:
   push:
     branches:
     - master
+  workflow_dispatch:
 
 name: Test and deploy grading script to AWS Lambda
 
