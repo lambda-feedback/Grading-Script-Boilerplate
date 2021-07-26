@@ -11,10 +11,15 @@ jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
+    
     strategy:
       fail-fast: false
       matrix:
         python-version: [ 3.8 ]
+    
+    defaults:
+      run:
+        working-directory: app/
 
     steps:
     - name: Checkout
@@ -29,25 +34,25 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         python -m pip install flake8 pytest
-        python -m pip install -r app/tools/handler_requirements.txt
-        python -m pip install -r app/requirements.txt
+        python -m pip install -r tools/handler_requirements.txt
+        python -m pip install -r requirements.txt
         
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
-        flake8 app/ --count --select=E9,F63,F7,F82 --show-source --statistics
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-        flake8 app/ --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
         
     - name: Test Handler functions
       run: |
-        pytest app/tests/handling.py::TestHandlerFunction
+        pytest -v tests/handling.py::TestHandlerFunction
     - name: Test JSON schema
       run: |
-        pytest app/tests/validation.py::TestSchemaValidation
+        pytest -v tests/validation.py::TestSchemaValidation
     - name: Test Grading functions
       run: |
-        pytest app/tests/grading.py::TestGradingFunction
+        pytest -v tests/grading.py::TestGradingFunction
   
   
   deploy:
