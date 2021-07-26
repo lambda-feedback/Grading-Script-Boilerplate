@@ -9,6 +9,4 @@ RUN pip3 install -r handler_requirements.txt
 
 # Copy the scripts
 COPY __init__.py ./app/
-
 COPY tools/*.py ./app/tools/
-COPY tests/__init__.py tests/classes.py ./app/tests/

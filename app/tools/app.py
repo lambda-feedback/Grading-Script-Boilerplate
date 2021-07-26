@@ -3,9 +3,10 @@ import json, unittest, sys, os
 from typing import Tuple
 
 from ..algorithm import grading_function
-from ..tests import *
+from ..tests import TestSchemaValidation, TestGradingFunction
 
 from .validate import validate_request
+from .healthcheck import HealthcheckRunner
 
 """
     Healthcheck Methods
