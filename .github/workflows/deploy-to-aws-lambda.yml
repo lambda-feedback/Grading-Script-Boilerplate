@@ -1,25 +1,11 @@
 on:
-  pull_request:
+  push:
     branches:
     - master
 
 name: Test and deploy grading script to AWS Lambda
 
 jobs:
-  test:
-    name: Test grading functions
-    runs-on: ubuntu-latest
-    
-    steps:
-    - name: Test schema
-      run: |
-        python -m unittest app.tests.validation
-    - name: Test algorithm
-      run: |
-        python -m unittest app.tests.grading
-    - name: Test handler function
-      run: |
-        python -m unittest app.tests.handling
           
   deploy:
     name: Deploy
@@ -45,7 +31,7 @@ jobs:
       id: build-image
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: my-ecr-repo
+        ECR_REPOSITORY: boilerplate-question-type
         IMAGE_TAG: ${{ github.sha }}
       run: |
         # Build docker image from algorithm, schema and requirements
@@ -57,7 +43,8 @@ jobs:
     - name: Update lambda function image
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: is-exact-equal
-        IMAGE_TAG: lambda
+        ECR_REPOSITORY: boilerplate-question-type
+        LAMBDA_FUNCTION_NAME: BoilerplateQuestionType
+        IMAGE_TAG: ${{ github.sha }}
       run: |
         aws lambda update-function-code --function-name $LAMBDA_FUNCTION_NAME --image-uri $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
