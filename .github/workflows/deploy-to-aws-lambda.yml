@@ -44,7 +44,7 @@ jobs:
     - name: Update lambda function image
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: test-question-type-boilerplate
+        ECR_REPOSITORY: test-boilerplate-question-type
         LAMBDA_FUNCTION_NAME: test_question_type_boilerplate
         IMAGE_TAG: ${{ github.sha }}
       run: |
