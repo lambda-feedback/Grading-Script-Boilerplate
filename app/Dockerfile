@@ -1,5 +1,5 @@
 # Base image that bundles AWS Lambda Python 3.8 image with some middleware functions
-FROM python-lambda-question-type:testingv2
+FROM loumstarlearjet/python-lambda-question-type:testing
 
 # To avoid setting up the app in the global space,
 # everything is package within an /app directory.
