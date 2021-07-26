@@ -4,10 +4,6 @@ on:
   workflow_dispatch:
 
 jobs:
-
-  build:
-
-    runs-on: ubuntu-latest
       
   push_to_registry:
     name: Build and Push to DockerHub Registry
