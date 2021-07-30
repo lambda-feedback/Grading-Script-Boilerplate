@@ -21,6 +21,13 @@ class TestSchemaValidation(unittest.TestCase):
         Use validate_request() to check your schema works as 
         it should.
     """
+    def test_empty_request_body(self):
+        body = {}
+
+        validation_error = validate_request(body)
+
+        self.assertNotEqual(validation_error, None)
+        self.assertEqual(validation_error.get("message"), "Schema threw an error when validating the request body.")
 
     def test_invalid_grading_data(self):
         body = {"hello": "world"}
@@ -31,7 +38,7 @@ class TestSchemaValidation(unittest.TestCase):
         self.assertEqual(validation_error.get("message"), "Schema threw an error when validating the request body.")
 
     def test_valid_grading_data(self):
-        body = {"command": "grade"}
+        body = {"example": "property"}
 
         validation_error = validate_request(body)
 

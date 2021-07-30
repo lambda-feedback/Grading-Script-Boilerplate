@@ -21,7 +21,7 @@ class TestGradingFunction(unittest.TestCase):
         as it should.
     """
     def test_returns_is_correct_true(self):
-        body = {"command": "grade"}
+        body = {}
 
         response = grading_function(body)
 

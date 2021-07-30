@@ -2,7 +2,7 @@ import unittest, json
 
 from pprint import pprint
 
-from ..tools.app import handler
+from ..tools.handler import handler
 
 class TestHandlerFunction(unittest.TestCase):
     def __init__(self, methodName: str) -> None:
@@ -10,7 +10,7 @@ class TestHandlerFunction(unittest.TestCase):
         self._response = {}
 
     def tearDown(self) -> None:
-        #pprint(self._response)
+        pprint(self._response)
 
         return super().tearDown()
 
@@ -21,8 +21,9 @@ class TestHandlerFunction(unittest.TestCase):
         }
 
         self._response = handler(event)
+        error = self._response.get("error")
 
-        self.assertEqual(self._response.get("message"), "LookupError: No grading data supplied in request body.")
+        self.assertEqual(error.get("message"), "LookupError: No grading data supplied in request body.")
 
     def test_non_json_body(self):
         event = {
@@ -31,14 +32,19 @@ class TestHandlerFunction(unittest.TestCase):
         }
 
         self._response = handler(event)
+        error = self._response.get("error")
 
-        self.assertEqual(self._response.get("message"), "JSONDecodeError: Request body is not valid JSON.")
+        self.assertEqual(error.get("message"), "JSONDecodeError: Request body is not valid JSON.")
 
     def test_healthcheck(self):
-        body = {"command": "healthcheck"}
+        body = {}
+
         event = {
             "random": "metadata",
-            "body": json.dumps(body)
+            "body": json.dumps(body),
+            "headers": {
+                "command": "healthcheck"
+            }
         }
 
         self._response = handler(event)

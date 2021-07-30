@@ -1,5 +1,6 @@
 # Base image that bundles AWS Lambda Python 3.8 image with some middleware functions
-FROM loumstarlearjet/python-lambda-question-type:testing
+#FROM loumstarlearjet/python-lambda-question-type:testing
+FROM test_base_image:latest
 
 # To avoid setting up the app in the global space,
 # everything is package within an /app directory.
@@ -10,7 +11,7 @@ COPY requirements.txt .
 RUN pip3 install -r requirements.txt
 
 # Copy the schema needed to check the incoming data is valid
-COPY request_body_schema.json ./app/
+COPY schema.json ./app/
 
 # Copy the grading and testing scripts
 COPY algorithm.py ./app/

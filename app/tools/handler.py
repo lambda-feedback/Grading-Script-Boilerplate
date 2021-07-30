@@ -122,23 +122,30 @@ def handler(event, context={}):
     If the parsing or validation fails at any point, the handler will return the issue
     back to the requester.
     """
+    headers = event.get("headers", dict())
+    command = headers.get("command", "grade")
+
+    response = {"command": command}
+
+    if command == "healthcheck":
+        response["result"] = healthcheck()
+        return response
+    elif command != "grade":
+        response["error"] = {"message": f"'{command}' is not a valid command."}
+        return response
 
     body, parse_error = parse_body(event)
 
     if parse_error:
-        return parse_error
+        response["error"] = parse_error
+        return response
     
     validation_error = validate_request(body)
 
     if validation_error:
-        return validation_error
-    
-    result = grading_function(body) \
-        if body["command"] == "grade" \
-        else healthcheck()
+        response["error"] = validation_error
+        return response
 
-    return {
-        "command": body["command"],
-        "result": result,
-        "event": event
-    }
+    response["result"] = grading_function(body)
+
+    return response

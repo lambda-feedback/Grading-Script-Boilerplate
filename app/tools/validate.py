@@ -5,12 +5,12 @@ from typing import Union
 from jsonschema import Draft7Validator as Validator
 
 path = os.path.abspath(os.path.dirname(__file__))
-schema_path = os.path.join(path, "..", "request_body_schema.json")
+schema_path = os.path.join(path, "..", "schema.json")
 
 # Load the request body schema and validator
 with open(schema_path, 'r') as s:
-    request_body_schema = json.load(s)
-    request_body_validator = Validator(request_body_schema)
+    schema = json.load(s)
+    validator = Validator(schema)
 
 def validate_request(body: dict) -> Union[dict, None]:
     """
@@ -22,10 +22,10 @@ def validate_request(body: dict) -> Union[dict, None]:
     path to the rule in the schema that has thrown the error.
     """
     
-    if not request_body_validator.is_valid(body):
+    if not validator.is_valid(body):
         error_list = []
 
-        for e in request_body_validator.iter_errors(body):
+        for e in validator.iter_errors(body):
             error_list.append({
                 "message": e.message,
                 "path": list(e.absolute_schema_path)
@@ -34,7 +34,7 @@ def validate_request(body: dict) -> Union[dict, None]:
         return {
             "message": "Schema threw an error when validating the request body.",
             "errors": error_list,
-            "request_body_schema": request_body_schema
+            "schema": schema
         }
     
     return None

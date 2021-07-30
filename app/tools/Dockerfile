@@ -4,8 +4,8 @@ FROM public.ecr.aws/lambda/python:3.8
 WORKDIR /app
 
 # Copy and install jsonschema package
-COPY tools/handler_requirements.txt .
-RUN pip3 install -r handler_requirements.txt
+COPY tools/tools_requirements.txt .
+RUN pip3 install -r tools_requirements.txt
 
 # Copy the scripts
 COPY __init__.py ./app/
