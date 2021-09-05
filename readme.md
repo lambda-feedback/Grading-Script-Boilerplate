@@ -4,6 +4,22 @@ This template repository contains the boilerplate code needed in order to create
 
 This version is specifically for python, however the ultimate goal is to make similar boilerplate repositories in any language, allowing tutors the freedom to code in what they feel most comfortable with.
 
+## Table of Contents
+
+- [Repository Structure](#repository-structure)
+- [How it works](#how-it-works)
+    - [Docker & Amazon Web Services (AWS)](#docker-&-amazon-web-services-aws)
+    - [Middleware Functions](#middleware-functions)
+    - [GitHub Actions](#github-actions)
+- [Pre-requisites](#pre-requisites)
+- [Usage](#usage)
+    - [Getting Started](#getting-started)
+    - [Best Practises](#best-practises)
+    - [Coding](#coding)
+    - [Testing](#testing)
+    - [Deployement](#deployment)
+- [Contact](#contact)
+
 ## Repository Structure
 
 ```bash
@@ -60,7 +76,7 @@ On top of that, when starting a new grading script, you will have to complete a 
 
 Once the code passes all these tests, it will then be uploaded to AWS and will be deployed and ready to go in only a few minutes.
 
-## Pre-requisities
+## Pre-requisites
 
 Although all programming can be done through the GitHub interface, it is recommended you do this locally on your machine. To do this, you must have installed:
 
@@ -68,13 +84,27 @@ Although all programming can be done through the GitHub interface, it is recomme
 
 - GitHub Desktop or the `git` CLI.
 
-- A good code editor such as Atom, VS Code, or Sublime.
+- A code editor such as Atom, VS Code, or Sublime.
 
 Copy this template over by clicking __Use this template__ button found in the repository on GitHub. Save it to the `Software-for-Maths-Learning` Organisation.
 
 ## Usage
 
 ### Getting Started
+
+Begin by downloading the repository to your computer. This can be done either through GitHub Desktop or using the command:
+
+```bash
+git clone git@github.com:Software-for-Maths-Learning/Grading-Script-Boilerplate.git
+```
+
+Navigate into the repository folder and open `algorithm.py`. Inside is a boilerplate function called `grading_function()` which is called when a grading request is made.
+
+Next, open `tests/grading.py` and `tests/validation.py`. These scripts are used for building unit tests that check your algorithm and schema work as they should using a library called _unittest_.
+
+Another unit test file is available called `handling.py`, however this is to test that the middleware functions work as they should so you shouldn't need to modify it.
+
+An example unit test is in each file and for more information on using _unittest_, click [here](https://docs.python.org/3/library/unittest.html) to read the docs.
 
 ### Best Practises
 
@@ -93,3 +123,4 @@ Copy this template over by clicking __Use this template__ button found in the re
 ### Deployment
 
 ## Contact
+
