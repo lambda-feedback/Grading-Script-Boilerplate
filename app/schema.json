@@ -4,7 +4,8 @@
   "type": "object",
   "properties": {
     "response": {},
-    "answer": {}
+    "answer": {},
+    "params": {}
   },
   "required": ["response", "answer"],
   "additionalProperties": false
