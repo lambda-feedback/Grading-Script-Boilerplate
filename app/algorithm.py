@@ -1,4 +1,4 @@
-def grading_function(body: dict) -> dict:
+def grading_function(response, answer, params):
     """
     Function used to grade a student response.
     ---
