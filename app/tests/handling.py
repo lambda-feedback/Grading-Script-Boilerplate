@@ -1,16 +1,18 @@
-import unittest, json
-
-from pprint import pprint
+import unittest
+import pprint
 
 from ..tools.handler import handler
 
 class TestHandlerFunction(unittest.TestCase):
-    def __init__(self, methodName: str) -> None:
+    def __init__(self, methodName: str):
         super().__init__(methodName=methodName)
-        self._response = {}
+        self.__response = None
 
     def tearDown(self) -> None:
-        pprint(self._response)
+        if self.__response is not None:
+            pprint.pprint(self.__response)
+        
+        self.__response = None
 
         return super().tearDown()
 
@@ -20,10 +22,12 @@ class TestHandlerFunction(unittest.TestCase):
             "without": "a body"
         }
 
-        self._response = handler(event)
-        error = self._response.get("error")
+        self.__response = handler(event)
+        error = self.__response.get("error")
 
-        self.assertEqual(error.get("message"), "LookupError: No grading data supplied in request body.")
+        self.assertEqual(
+            error.get("message"), 
+            "No grading data supplied in request body.")
 
     def test_non_json_body(self):
         event = {
@@ -31,28 +35,78 @@ class TestHandlerFunction(unittest.TestCase):
             "body": "{}}}{{{[][] this is not json."
         }
 
-        self._response = handler(event)
-        error = self._response.get("error")
+        self.__response = handler(event)
+        error = self.__response.get("error")
 
-        self.assertEqual(error.get("message"), "JSONDecodeError: Request body is not valid JSON.")
+        self.assertEqual(
+            error.get("message"),
+            "Request body is not valid JSON.")
 
-    def test_healthcheck(self):
-        body = {}
-
+    def test_grade(self):
         event = {
             "random": "metadata",
-            "body": json.dumps(body),
+            "body": {
+                "response": "hello",
+                "answer": "world!",
+                "params": {}
+            },
+            "headers": {
+                "command": "grade"
+            }
+        }
+
+        self.__response = handler(event)
+        self.assertEqual(self.__response.get("command"), "grade")
+
+        result = self.__response.get("result")
+        self.assertTrue(result.get("is_correct"))
+
+    def test_grade_no_params(self):
+        event = {
+            "random": "metadata",
+            "body": {
+                "response": "hello",
+                "answer": "world!"
+            }
+        }
+
+        self.__response = handler(event)
+        self.assertEqual(self.__response.get("command"), "grade")
+
+        result = self.__response.get("result")
+        self.assertTrue(result.get("is_correct"))
+
+    def test_healthcheck(self):
+        event = {
+            "random": "metadata",
+            "body": "{}",
             "headers": {
                 "command": "healthcheck"
             }
         }
 
-        self._response = handler(event)
-        self.assertEqual(self._response.get("command"), "healthcheck")
+        self.__response = handler(event)
+        self.assertEqual(self.__response.get("command"), "healthcheck")
 
-        result = self._response.get("result")
+        result = self.__response.get("result")
         self.assertNotEqual(len(result.get("successes")), 0)
         self.assertTrue(result.get("tests_passed"))
+
+    def test_invalid_command(self):
+        event = {
+            "random": "metadata",
+            "body": "{}",
+            "headers": {
+                "command": "not a command"
+            }
+        }
+
+        self.__response = handler(event)
+        error = self.__response.get("error")
+    
+        self.assertEqual(
+            error.get("message"),
+            "Unknown command 'not a command'. Only 'grade' and 'healthcheck' are allowed.")
 
 if __name__ == "__main__":
     unittest.main()

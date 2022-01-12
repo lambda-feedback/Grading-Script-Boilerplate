@@ -1,151 +1,112 @@
-import json, unittest, sys, os
-
-from typing import Tuple
-
 from ..algorithm import grading_function
-from ..tests import TestSchemaValidation, TestGradingFunction
 
-from .validate import validate_request
-from .healthcheck import HealthcheckRunner
+from .parse import parse_body
+from .healthcheck import healthcheck
+
+from . import validate as v
 
 """
-    Healthcheck Methods
+    Command Handler Functions.
 """
 
-def healthcheck() -> dict:
-    """
-    Function used to return the results of the unittests in a JSON-encodable format.
+def handle_unknown_command(command):
+    """ 
+    Function to create the response when the command is unknown.
     ---
-    Therefore, this can be used as a healthcheck to make sure the algorithm is 
-    running as expected, and isn't taking too long to complete due to, e.g., issues 
-    with load balancing.
+    This function does not handle any of the request body so it is neither parsed or
+    validated against a schema. Instead, a simple message is returned telling the 
+    requestor that the command isn't allowed.
     """
+    return {
+        "error": {
+            "message": f"Unknown command '{command}'. Only 'grade' and 'healthcheck' are allowed."
+        }
+    }
 
-    # Redirect stderr stream to a null stream so the unittests are not logged on the console.
-    no_stream = open(os.devnull, 'w')
-    sys.stderr = no_stream
-
-    # Create a test loader and test runner instance
-    loader = unittest.TestLoader()
-
-    schema_tests = loader.loadTestsFromTestCase(TestSchemaValidation)
-    grading_tests = loader.loadTestsFromTestCase(TestGradingFunction)
-
-    suite = unittest.TestSuite([schema_tests, grading_tests])
-    runner = HealthcheckRunner(verbosity=0)
-
-    result = runner.run(suite)
-
-    # Reset stderr and close the null stream
-    sys.stderr = sys.__stderr__
-    no_stream.close()
-
-    return result
-
-"""
-    Parsing Methods
-"""
-
-def load_body(body_text: str) -> Tuple[dict, dict]:
+def handle_healthcheck_command():
     """
-    Function to convert JSON-encoded string of the request body into a dictionary.
+    Function to create the response when commanded to perform a healthcheck.
     ---
-    Returns a tuple, first element of which is the body, second of which is a 
-    JSON-encodable dictionary containing errors and helpful messages which can be used
-    as a response.
-
-    If the body could not be loaded, an empty dictionary is returned.
+    This function does not handle any of the request body so it is neither parsed or
+    validated against a schema.
     """
+    return {
+        "command": "healthcheck",
+        "result": healthcheck()
+    }
 
-    body, errors = dict(), dict()
+def handle_grade_command(event):
+    """
+    Function to create the response when commanded to grade an answer.
+    ---
+    This function attempts to parse the request body, performs schema validation and
+    attempts to run the grading function on the given parameters.
 
-    # Attempt to load the body text
+    If any of these fail, a message is returned and an error field is passed if more
+    information can be provided.
+    """
+    body, parse_error = parse_body(event)
+
+    if parse_error:
+        return {
+            "error": parse_error
+        }
+    
+    request_error = v.validate_request(body)
+
+    if request_error:
+        return {
+            "error": request_error
+        }
+    
     try:
-        body = json.loads(body_text)
-    # Catch Decode errors and return the problems back to the requester.
-    except json.JSONDecodeError as e:
-            errors["message"] = "JSONDecodeError: Request body is not valid JSON."
-            errors["error"] = {
-                "message": e.msg,
-                "location": {
-                    "line": e.lineno,
-                    "column": e.colno
+        response = body["response"]
+        answer = body["answer"]
+
+        params = body.get("params", dict())
+        
+        return {
+            "command": "grade",
+            "result": grading_function(response, answer, params)
+        }
+    
+    except Exception as e:
+        return {
+            "error": {
+                "message": "An exception was raised while executing the grading function.",
+                "error_thrown": {
+                    "message": repr(e)
                 }
             }
-    # Catch type error problems incase the body is not a string (for testing purposes).
-    except TypeError:
-        errors["message"] = "TypeError: Request body is not decoded JSON."
-
-    return (body, errors)
-
-def parse_body(event: dict) -> Tuple[dict, dict]:
-    """
-    Function to parse the request body into a dictionary from an AWS Event object.
-    ---
-    Returns a tuple, first element of which is the body, second of which is a 
-    JSON-encodable dictionary containing errors and helpful messages which can be used
-    as a response.
-
-    If the body could not be loaded, an empty dictionary is returned.
-    """
-
-    body, response = dict(), dict()
-
-    # Check if body exits in the event
-    if "body" not in event:
-        response = {
-            "message": "LookupError: No grading data supplied in request body."
         }
-
-        return (None, response)
-
-    # If it does, convert the body into a dictionary.
-    if type(event["body"]) == str:
-        body, response = load_body(event["body"])
-    else:
-        body = event["body"]
     
-    return (body, response)
-
 """
-    Main Handler Method
+    Main Handler Function
 """
 
 def handler(event, context={}):
     """
-    Main function invoked by AWS Lambda to handle incoming grading requests.
+    Main function invoked by AWS Lambda to handle incoming requests.
     ---
-
-    This function parses the body data from the event object, validates the information
-    using a schema and returns the result from the grading function.
-
-    If the parsing or validation fails at any point, the handler will return the issue
-    back to the requester.
+    This function invokes the handler function for that particular command and returns
+    the result. It also performs validation on the response body to make sure it follows
+    the schema set out in the request-response-schema repo.
     """
     headers = event.get("headers", dict())
     command = headers.get("command", "grade")
 
-    response = {"command": command}
-
     if command == "healthcheck":
-        response["result"] = healthcheck()
-        return response
-    elif command != "grade":
-        response["error"] = {"message": f"'{command}' is not a valid command."}
-        return response
+        response = handle_healthcheck_command()
+    elif command == "grade":
+        response = handle_grade_command(event)
+    else:
+        response = handle_unknown_command(command)
 
-    body, parse_error = parse_body(event)
+    response_error = v.validate_response(response)
 
-    if parse_error:
-        response["error"] = parse_error
-        return response
-    
-    validation_error = validate_request(body)
-
-    if validation_error:
-        response["error"] = validation_error
-        return response
-
-    response["result"] = grading_function(body)
+    if response_error:
+        return {
+            "error": response_error
+        }
 
     return response

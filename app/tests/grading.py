@@ -21,11 +21,10 @@ class TestGradingFunction(unittest.TestCase):
         as it should.
     """
     def test_returns_is_correct_true(self):
-        body = {}
-
-        response = grading_function(body)
-
-        self.assertEqual(response.get("is_correct"), True)
+        response, answer, params = None, None, dict()
+        result = grading_function(response, answer, params)
+        
+        self.assertEqual(result.get("is_correct"), True)
 
 if __name__ == "__main__":
     unittest.main()
