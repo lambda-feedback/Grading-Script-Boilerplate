@@ -1,5 +1,5 @@
 # Base image that bundles AWS Lambda Python 3.8 image with some middleware functions
-FROM loumstarlearjet/grading-script-base:testing
+FROM loumstarlearjet/python-grading-script-base:latest
 
 # To avoid setting up the app in the global space,
 # everything is package within an /app directory.
