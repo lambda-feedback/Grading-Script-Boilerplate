@@ -47,16 +47,16 @@ jobs:
           # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
-      - name: Test Handler functions
+      - name: Test Grading functions
         run: |
-          pytest -v tests/handling.py::TestHandlerFunction
+          pytest -v tests/grading.py::TestGradingFunction
       - name: Test Request/Response Schema validation
         run: |
           pytest -v tests/requests.py::TestRequestValidation
           pytest -v tests/responses.py::TestResponseValidation
-      - name: Test Grading functions
+      - name: Test Handler functions
         run: |
-          pytest -v tests/grading.py::TestGradingFunction
+          pytest -v tests/handling.py::TestHandlerFunction
 
   deploy:
     name: Deploy
