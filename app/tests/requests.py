@@ -33,7 +33,7 @@ class TestRequestValidation(unittest.TestCase):
 
         self.assertEqual(
             validation_error.get("error_thrown").get("message"),
-            "{'type': 'null'} is not allowed for None")
+            "None should not be valid under {'type': 'null'}")
     
     def test_missing_answer(self):
         body = {"response": "example", "params": {}}
@@ -53,7 +53,7 @@ class TestRequestValidation(unittest.TestCase):
 
         self.assertEqual(
             validation_error.get("error_thrown").get("message"),
-            "{'type': 'null'} is not allowed for None")  
+            "None should not be valid under {'type': 'null'}")  
 
     def test_bad_params(self):
         body = {"response": "example", "answer": "example", "params": 2}
