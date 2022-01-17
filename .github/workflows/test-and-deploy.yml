@@ -19,6 +19,10 @@ jobs:
     defaults:
       run:
         working-directory: app/
+        
+    env:
+      REQUEST_SCHEMA_URL: https://raw.githubusercontent.com/lambda-feedback/request-response-schemas/master/request.json
+      RESPONSE_SCHEMA_URL: https://raw.githubusercontent.com/lambda-feedback/request-response-schemas/master/response.json
 
     steps:
       - name: Checkout
@@ -46,9 +50,10 @@ jobs:
       - name: Test Handler functions
         run: |
           pytest -v tests/handling.py::TestHandlerFunction
-      - name: Test JSON schema
+      - name: Test Request/Response Schema validation
         run: |
-          pytest -v tests/validation.py::TestSchemaValidation
+          pytest -v tests/requests.py::TestRequestValidation
+          pytest -v tests/responses.py::TestResponseValidation
       - name: Test Grading functions
         run: |
           pytest -v tests/grading.py::TestGradingFunction
