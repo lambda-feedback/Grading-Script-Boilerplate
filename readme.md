@@ -122,4 +122,13 @@ An example unit test is in each file and for more information on using _unittest
 
 ### Deployment
 
+1. Change the name of the grading function in `config.json`
+1. The name must be unique. To view existing grading functions, go to:
+
+   - [Staging API Gateway Integrations](https://eu-west-2.console.aws.amazon.com/apigateway/main/develop/integrations/attach?api=c1o0u8se7b&region=eu-west-2&routes=0xsoy4q)
+   - [Production API Gateway Integrations](https://eu-west-2.console.aws.amazon.com/apigateway/main/develop/integrations/attach?api=cttolq2oph&integration=qpbgva8&region=eu-west-2&routes=0xsoy4q)
+
+1. Merge commits into the default branch
+   - This will trigger the `test-and-deploy.yml` workflow, which will build the docker image, push it to a shared ECR repository, then call the backend `grading-function/ensure` route to build the necessary infrastructure to make the function available from the client app.
+
 ## Contact
