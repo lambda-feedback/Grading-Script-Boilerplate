@@ -2,13 +2,16 @@ def grading_function(response, answer, params):
     """
     Function used to grade a student response.
     ---
-    The handler function passes only one argument to grading_function(), 
-    which is a dictionary of the structure of the API request body
-    deserialised from JSON.
+    The handler function passes three arguments to grading_function():
+
+    - `response` which are the answers provided by the student.
+    - `answer` which are the correct answers to compare against.
+    - `params` which are any extra parameters that may be useful,
+        e.g., error tolerances.
 
     The output of this function is what is returned as the API response 
-    and therefore must be JSON-encodable. This is also subject to 
-    standard response specifications.
+    and therefore must be JSON-encodable. It must also conform to the 
+    response schema.
 
     Any standard python library may be used, as well as any package 
     available on pip (provided it is added to requirements.txt).

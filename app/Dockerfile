@@ -1,5 +1,5 @@
 # Base image that bundles AWS Lambda Python 3.8 image with some middleware functions
-FROM loumstarlearjet/python-grading-script-base:latest
+FROM loumstarlearjet/python-grading-script-base:2.0
 
 # To avoid setting up the app in the global space,
 # everything is package within an /app directory.
@@ -9,12 +9,9 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip3 install -r requirements.txt
 
-# Copy the schema needed to check the incoming data is valid
-#COPY schema.json ./app/
-
 # Copy the grading and testing scripts
-COPY algorithm.py ./app/
-COPY tests/ ./app/tests/
+COPY grading.py ./app/
+COPY grading_tests.py ./app/
 
 # Set permissions so files and directories can be accessed on AWS
 RUN chmod 644 $(find . -type f)

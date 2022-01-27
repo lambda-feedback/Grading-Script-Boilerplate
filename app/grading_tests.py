@@ -1,6 +1,6 @@
 import unittest
 
-from ..algorithm import grading_function
+from .grading import grading_function
 
 class TestGradingFunction(unittest.TestCase):
     """

@@ -2,8 +2,12 @@ import unittest
 import time
 import os
 import sys
+import re
 
-from .. import tests
+from ..tests.requests import TestRequestValidation
+from ..tests.responses import TestResponseValidation
+
+from ...grading_tests import TestGradingFunction
 
 """
     Extension of the default TestResult class with timing information.
@@ -12,7 +16,20 @@ from .. import tests
 class HealthcheckResult(unittest.TextTestResult):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.test_timings = []
+
+        self.__path_re = re.compile(r"^[\.\/\w]+\.(\w+\.\w+)$")
+
+        self.__successes_json = []
+        self.__failures_json = []
+        self.__errors_json = []
+
+    def removePathFromId(self, path):
+        path_match = self.__path_re.match(path)
+
+        if path_match is None:
+            return "Unknown"
+
+        return path_match.group(1)
 
     def startTest(self, test):
         self._start_time = time.time()
@@ -21,12 +38,36 @@ class HealthcheckResult(unittest.TextTestResult):
     def addSuccess(self, test):
         elapsed_time_s = time.time() - self._start_time
         elapsed_time_us = round(1000000 * elapsed_time_s)
-        self.test_timings.append((test.id(), elapsed_time_us))
+        
+        self.__successes_json.append({
+            "name": self.removePathFromId(test.id()), 
+            "time": elapsed_time_us
+        })
 
         super().addSuccess(test)
 
-    def getTestTimings(self):
-        return self.test_timings
+    def addFailure(self, test, err):
+        self.__failures_json.append({
+            "name": self.removePathFromId(test.id())
+        })
+
+        super().addFailure(test, err)
+
+    def addError(self, test, err):
+        self.__errors_json.append({
+            "name": self.removePathFromId(test.id())
+        })
+
+        super().addError(test, err)
+
+    def getSuccessesJSON(self):
+        return self.__successes_json
+
+    def getFailuresJSON(self):
+        return self.__failures_json
+
+    def getErrorsJSON(self):
+        return self.__errors_json
 
 """
     Extension of the default TestRunner class that returns a JSON-encodable result
@@ -53,9 +94,9 @@ class HealthcheckRunner(unittest.TextTestRunner):
 
         results = {
             "tests_passed": result.wasSuccessful(),
-            "successes": [{"name": n, "time": t} for (n, t) in result.getTestTimings()], 
-            "failures": [{"name": i.id()} for (i, _) in result.failures], 
-            "errors": [{"name": i.id()} for (i, _) in result.errors]
+            "successes": result.getSuccessesJSON(), 
+            "failures": result.getFailuresJSON(), 
+            "errors": result.getErrorsJSON()
         }
 
         return results
@@ -75,11 +116,15 @@ def healthcheck() -> dict:
     # Create a test loader and test runner instance
     loader = unittest.TestLoader()
 
-    request_tests = loader.loadTestsFromTestCase(tests.TestRequestValidation)
-    response_tests = loader.loadTestsFromTestCase(tests.TestResponseValidation)
-    grading_tests = loader.loadTestsFromTestCase(tests.TestGradingFunction)
+    request_tests = loader.loadTestsFromTestCase(TestRequestValidation)
+    response_tests = loader.loadTestsFromTestCase(TestResponseValidation)
+    grading_tests = loader.loadTestsFromTestCase(TestGradingFunction)
 
-    suite = unittest.TestSuite([request_tests, response_tests, grading_tests])
+    suite = unittest.TestSuite([
+        request_tests, 
+        response_tests, 
+        grading_tests])
+    
     runner = HealthcheckRunner(verbosity=0)
 
     result = runner.run(suite)

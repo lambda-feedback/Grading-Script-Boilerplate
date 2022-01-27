@@ -230,14 +230,14 @@ class TestResponseValidation(unittest.TestCase):
         body = {
             "command": "grade",
             "result": {
-                "is_correct"
+                "is_correct": True
             }
         }
 
         validation_error = validate_response(body)
         self.assertEqual(validation_error, None)
 
-    def test_valid_response_with_grade_command(self):
+    def test_valid_response_with_healthcheck_command(self):
         body = {
             "command": "healthcheck", 
             "result": {

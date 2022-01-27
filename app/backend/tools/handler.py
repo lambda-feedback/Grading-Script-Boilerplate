@@ -1,4 +1,4 @@
-from ..algorithm import grading_function
+from ...grading import grading_function
 
 from .parse import parse_body
 from .healthcheck import healthcheck

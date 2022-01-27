@@ -1,20 +1,8 @@
 import unittest
-import pprint
 
 from ..tools.handler import handler
 
 class TestHandlerFunction(unittest.TestCase):
-    def __init__(self, methodName: str):
-        super().__init__(methodName=methodName)
-        self.__response = None
-
-    def tearDown(self) -> None:
-        if self.__response is not None:
-            pprint.pprint(self.__response)
-        
-        self.__response = None
-
-        return super().tearDown()
 
     def test_handle_bodyless_event(self):
         event = {
@@ -22,8 +10,10 @@ class TestHandlerFunction(unittest.TestCase):
             "without": "a body"
         }
 
-        self.__response = handler(event)
-        error = self.__response.get("error")
+        response = handler(event)
+
+        self.assertIn("error", response)
+        error = response.get("error")
 
         self.assertEqual(
             error.get("message"), 
@@ -35,8 +25,10 @@ class TestHandlerFunction(unittest.TestCase):
             "body": "{}}}{{{[][] this is not json."
         }
 
-        self.__response = handler(event)
-        error = self.__response.get("error")
+        response = handler(event)
+
+        self.assertIn("error", response)
+        error = response.get("error")
 
         self.assertEqual(
             error.get("message"),
@@ -55,11 +47,10 @@ class TestHandlerFunction(unittest.TestCase):
             }
         }
 
-        self.__response = handler(event)
-        self.assertEqual(self.__response.get("command"), "grade")
+        response = handler(event)
 
-        result = self.__response.get("result")
-        self.assertTrue(result.get("is_correct"))
+        self.assertEqual(response.get("command"), "grade")
+        self.assertIn("result", response)
 
     def test_grade_no_params(self):
         event = {
@@ -70,11 +61,10 @@ class TestHandlerFunction(unittest.TestCase):
             }
         }
 
-        self.__response = handler(event)
-        self.assertEqual(self.__response.get("command"), "grade")
+        response = handler(event)
 
-        result = self.__response.get("result")
-        self.assertTrue(result.get("is_correct"))
+        self.assertEqual(response.get("command"), "grade")
+        self.assertIn("result", response)
 
     def test_healthcheck(self):
         event = {
@@ -85,11 +75,13 @@ class TestHandlerFunction(unittest.TestCase):
             }
         }
 
-        self.__response = handler(event)
-        self.assertEqual(self.__response.get("command"), "healthcheck")
+        response = handler(event)
 
-        result = self.__response.get("result")
-        self.assertNotEqual(len(result.get("successes")), 0)
+        self.assertEqual(response.get("command"), "healthcheck")
+        self.assertIn("result", response)
+
+        result = response.get("result")
+
         self.assertTrue(result.get("tests_passed"))
 
     def test_invalid_command(self):
@@ -101,8 +93,8 @@ class TestHandlerFunction(unittest.TestCase):
             }
         }
 
-        self.__response = handler(event)
-        error = self.__response.get("error")
+        response = handler(event)
+        error = response.get("error")
     
         self.assertEqual(
             error.get("message"),

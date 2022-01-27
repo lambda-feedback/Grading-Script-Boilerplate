@@ -3,13 +3,15 @@ FROM public.ecr.aws/lambda/python:3.8
 
 WORKDIR /app
 
-# Copy and install jsonschema package
-COPY tools/tools_requirements.txt .
-RUN pip3 install -r tools_requirements.txt
+# Install backend dependencies
+COPY backend/requirements.txt ./backend/
+RUN pip3 install -r backend/requirements.txt
 
 # Copy the scripts
 COPY __init__.py ./app/
-COPY tools/*.py ./app/tools/
+COPY backend/__init__.py ./app/backend/
+COPY backend/tests/*.py ./app/backend/tests/
+COPY backend/tools/*.py ./app/backend/tools/
 
 ENV REQUEST_SCHEMA_URL https://raw.githubusercontent.com/lambda-feedback/request-response-schemas/master/request.json
 ENV RESPONSE_SCHEMA_URL https://raw.githubusercontent.com/lambda-feedback/request-response-schemas/master/response.json
