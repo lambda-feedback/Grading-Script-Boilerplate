@@ -4,10 +4,11 @@ from .parse import parse_body
 from .healthcheck import healthcheck
 
 from . import validate as v
+
+
 """
     Command Handler Functions.
 """
-
 
 def handle_unknown_command(command):
     """ 
@@ -19,8 +20,7 @@ def handle_unknown_command(command):
     """
     return {
         "error": {
-            "message":
-            f"Unknown command '{command}'. Only 'grade' and 'healthcheck' are allowed."
+            "message": f"Unknown command '{command}'."
         }
     }
 
@@ -32,7 +32,10 @@ def handle_healthcheck_command():
     This function does not handle any of the request body so it is neither parsed or
     validated against a schema.
     """
-    return {"command": "healthcheck", "result": healthcheck()}
+    return {
+        "command": "healthcheck", 
+        "result": healthcheck()
+    }
 
 
 def handle_grade_command(event):
@@ -69,8 +72,7 @@ def handle_grade_command(event):
     except Exception as e:
         return {
             "error": {
-                "message":
-                "An exception was raised while executing the grading function.",
+                "message": "An exception was raised while executing the grading function.",
                 "description": str(e) if str(e) != "" else repr(e)
             }
         }
