@@ -22,7 +22,7 @@ jobs:
       - name: Build and Push Base Image
         uses: docker/build-push-action@v2
         with:
-          file: app/tools/Dockerfile
+          file: app/backend/Dockerfile
           context: app/
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/python-grading-script-base:2.0
