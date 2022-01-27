@@ -25,4 +25,4 @@ jobs:
           file: app/tools/Dockerfile
           context: app/
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/python-grading-script-base:latest
+          tags: ${{ secrets.DOCKER_USERNAME }}/python-grading-script-base:2.0
