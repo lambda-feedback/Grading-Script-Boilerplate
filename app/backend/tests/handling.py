@@ -98,7 +98,7 @@ class TestHandlerFunction(unittest.TestCase):
     
         self.assertEqual(
             error.get("message"),
-            "Unknown command 'not a command'. Only 'grade' and 'healthcheck' are allowed.")
+            "Unknown command 'not a command'.")
 
 if __name__ == "__main__":
     unittest.main()
